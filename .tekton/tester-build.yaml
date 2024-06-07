@@ -15,7 +15,7 @@ metadata:
     # with taskRef and it will automatically be embedded into our pipeline.
     pipelinesascode.tekton.dev/task: "[.tekton/tasks/alauda-git-clone.yaml]"
 
-    pipelinesascode.tekton.dev/max-keep-runs: "5"
+    pipelinesascode.tekton.dev/max-keep-runs: "1"
 spec:
   params:
     # The variable with brackets are special to Pipelines as Code
