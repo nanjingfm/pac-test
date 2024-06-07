@@ -1,0 +1,267 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  annotations:
+    katanomi.dev/icon: data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMzBweCIgaGVpZ2h0PSIzMHB4IiB2aWV3Qm94PSIwIDAgMzAgMzAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8dGl0bGU+Z2l0PC90aXRsZT4KICAgIDxnIGlkPSLmjIHnu63lj5HluIMiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxnIGlkPSJEZXZvcHMt5Lia5Yqh6KeG5Zu+LeaMgee7reS6pOS7mC3mjIHnu63lj5HluIMtZ2l0b3Bz5Zy65pmvIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjgxMy4wMDAwMDAsIC03MzY5LjAwMDAwMCkiIGZpbGw9IiNERTRDMzYiIGZpbGwtcnVsZT0ibm9uemVybyI+CiAgICAgICAgICAgIDxnIGlkPSJnaXQiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI4MTMuMDAwMDAwLCA3MzY5LjAwMDAwMCkiPgogICAgICAgICAgICAgICAgPHBhdGggZD0iTTI5LjQzNDc5ODQsMTMuNjYzMzYyOSBMMTYuMzM2MTgsMC41NjU3NDQ1MjQgQzE1LjU4MTcxLC0wLjE4ODU4MTUwOCAxNC4zNTg2MjUyLC0wLjE4ODU4MTUwOCAxMy42MDQxNTUzLDAuNTY1NzQ0NTI0IEwxMC44ODQxMzA3LDMuMjg1NzY5MTEgTDE0LjMzNDE2MTksNi43MzU4MDAzIEMxNS4xNjQyODc0LDYuNDUyODA2MTMgMTYuMDgzMTE4Nyw2LjY2Nzk5NjE3IDE2LjcwMTI1MzYsNy4yOTAxNzI1NCBDMTcuMzE5Mzg4NSw3LjkxMjM0ODkxIDE3LjUyODU4NjEsOC44MzI1NjMwMSAxNy4yNDAxODgxLDkuNjYwODI2NzQgTDIwLjU2NTIxODIsMTIuOTg1ODU2OCBDMjEuNTc2NzM3OSwxMi42MzcwMjE5IDIyLjY5NTE2NzUsMTMuMDMyNDU4MiAyMy4yNjI2MzE4LDEzLjkzOTU2NDcgQzIzLjgzMDA5NiwxNC44NDY2NzEyIDIzLjY5NjQyMjQsMTYuMDI1MzkzNSAyMi45NDAyMzk3LDE2Ljc4MjM5MTEgQzIyLjE2NTg0MTIsMTcuNTU4Njc4MSAyMC45NTA5MzYyLDE3LjY3OTg3NTQgMjAuMDM4NDQyNiwxNy4wNzE4NzA2IEMxOS4xMjU5NDksMTYuNDYzODY1OCAxOC43Njk5Nzc1LDE1LjI5NTk3NTcgMTkuMTg4MjA1NywxNC4yODIzNjg1IEwxNi4wODcxNzc3LDExLjE4MTM0MDUgTDE2LjA4NzE3NzcsMTkuMzQyNDE0MyBDMTcuMDU4MjM1MiwxOS44MjI3MDM2IDE3LjU2MjIzMjgsMjAuOTE1NzMxNSAxNy4yOTY5NjI0LDIxLjk2NjA5NDMgQzE3LjAzMTY5MiwyMy4wMTY0NTcxIDE2LjA2OTE0MjcsMjMuNzM5MTA2OSAxNC45ODY0ODA2LDIzLjcwMDcyNjggQzEzLjkwMzgxODQsMjMuNjYyMzQ2NyAxMi45OTQ4NTY1LDIyLjg3MzM1MjQgMTIuODA0NjI4NywyMS44MDY4NDIzIEMxMi42MTQ0MDA5LDIwLjc0MDMzMjIgMTMuMTk0NTMxMiwxOS42ODU3MzYzIDE0LjE5NzE2MDYsMTkuMjc1NDEzNiBMMTQuMTk2NjYwNiwxMS4wMzg4MzkyIEMxMy42Mjk3NzUsMTAuODA2NDI1NSAxMy4xNzkxMzgxLDEwLjM1NzMwNjYgMTIuOTQ0ODEyOSw5Ljc5MTIwODQ3IEMxMi43MTA0ODc3LDkuMjI1MTEwMjggMTIuNzExODY4Nyw4LjU4ODg4NzUgMTIuOTQ4NjQ5Myw4LjAyMzgxMTk0IEw5LjU0NzYxODYsNC42MjE3ODExOSBMMC41NjYwMzc0MDgsMTMuNjAyODYyNCBDMC4yMDM2MTAyMDMsMTMuOTY1MjgxIDAsMTQuNDU2ODMxMyAwLDE0Ljk2OTM3NDcgQzAsMTUuNDgxOTE4MSAwLjIwMzYxMDIwMywxNS45NzM0Njg0IDAuNTY2MDM3NDA4LDE2LjMzNTg4NzEgTDEzLjY2NDY1NTgsMjkuNDM0MDA1NSBDMTQuMDI2OTg5MSwyOS43OTY0MDIzIDE0LjUxODQ1NjYsMzAgMTUuMDMwOTE4MiwzMCBDMTUuNTQzMzc5NywzMCAxNi4wMzQ4NDcyLDI5Ljc5NjQwMjMgMTYuMzk3MTgwNSwyOS40MzQwMDU1IEwyOS40MzQyOTg0LDE2LjM5Njg4NzYgQzMwLjE4ODc5NjEsMTUuNjQxOTAzMSAzMC4xODg3OTYxLDE0LjQxODM0NzUgMjkuNDM0Mjk4NCwxMy42NjMzNjI5IiBpZD0i6Lev5b6EIj48L3BhdGg+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==
+    katanomi.dev/modules: Continuous Delivery
+    tekton.dev/categories: Git
+    translation.katanomi.dev/categories.en: Git
+    translation.katanomi.dev/categories.zh: Git
+    translation.katanomi.dev/description.en: Checks out source code
+    translation.katanomi.dev/description.zh: 检出源代码
+    translation.katanomi.dev/displayName.en: Git Clone
+    translation.katanomi.dev/displayName.zh: 克隆代码
+    ui.katanomi.dev/descriptors: |-
+      - path: params.url
+        x-descriptors:
+          - urn:alm:descriptor:label:en:Code Repository
+          - urn:alm:descriptor:label:zh:代码仓库
+          - urn:alm:descriptor:com.tectonic.ui:text
+          - urn:alm:descriptor:com.tectonic.ui:validation:required
+          - "urn:alm:descriptor:tooltip:zh:请输入需要检出的代码仓库分支信息，输入格式示范：https://github.com/project/repo@main"
+          - "urn:alm:descriptor:tooltip:en:Please input the branch information of the code repository to be checked out, the input format is as follows: https://github.com/project/repo@main"
+      - path: params.depth
+        x-descriptors:
+          - urn:alm:descriptor:label:en:Clone Depth
+          - urn:alm:descriptor:label:zh:克隆深度
+          - urn:alm:descriptor:com.tectonic.ui:number
+          - urn:alm:descriptor:tooltip:zh:克隆深度值代表克隆最近commit的版本数，通过设置克隆深度可加速工作区准备效率，1表示克隆最新版本，0表示克隆所有版本。
+          - urn:alm:descriptor:tooltip:en:Clone depth indicates the versions of commits, which can speed up the efficiency of workspace preparation if set appropriately. 1 means clone the latest version, 0 means clone all versions.
+      - path: params.pre-script
+        x-descriptors:
+          - urn:alm:descriptor:label:en:Execute before Clone
+          - urn:alm:descriptor:label:zh:克隆前执行
+          - urn:alm:descriptor:widgets:commandEditor
+          - "urn:alm:descriptor:tooltip:zh:自定义 shell 脚本，它将会在 git-clone 之前运行，如可在克隆前设置代理：export http_proxy=127.0.0.1:80。"
+          - "urn:alm:descriptor:tooltip:en:Custom shell script that run before git-clone, e.g. you can set the proxy before cloning: export http_proxy=127.0.0.1:80."
+  labels:
+    katanomi.dev/source: "system"
+    katanomi.dev/hidden: "true"
+  name: alauda-git-clone
+spec:
+  description: 检出源代码
+  params:
+  - description: Code Repository
+    name: url
+    type: string
+  - name: revision
+    type: string
+    description: (optional) git revision to checkout
+    default: ""
+  - name: commit
+    type: string
+    description: (optional) git commit to checkout, will override revision if both are specified
+    default: ""
+  - default: ""
+    description: (optional) git refspec to fetch before checking out revision
+    name: refspec
+    type: string
+  - default: "1"
+    description: Clone Depth
+    name: depth
+    type: string
+  - default: "false"
+    description: log the commands used during execution
+    name: verbose
+    type: string
+  - default: ""
+    description: Execute before Clone
+    name: pre-script
+    type: string
+  - name: checkout-path
+    type: string
+    description: (optional) path to checkout the git repo to, defaults to the workspace path
+    default: ""
+  - name: tools-image
+    type: string
+    description: (optional) image to use for git operations
+    default: "build-harbor.alauda.cn/devops/tektoncd/pipeline/cmd/git-init:v0.41.0-87586e55"
+  results:
+  - description: The precise commit SHA that was fetched by this Task
+    name: commit-id
+  - description: The precise commit short SHA that was fetched by this Task
+    name: commit-short-id
+  - description: The precise URL that was fetched by this Task
+    name: url
+  - description: The precise revision that was fetched by this Task
+    name: revision
+  steps:
+  - image: $(params.tools-image)
+    name: clone
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 200m
+        memory: 200Mi
+    script: |
+      #!/bin/sh
+      set -eu -o pipefail
+      if [[ "$(params.verbose)" == "true" ]] ; then
+        set -x
+      fi
+
+      # Avoid script execution failure due to special characters in revision, write revision to file
+      cat <<'EOF' > /tmp/revision
+      $(params.revision)
+      EOF
+
+      echo "==> 📢 url: $(params.url)"
+      echo "==> 📢 revision: $(cat /tmp/revision)"
+      echo "==> 📢 commit: $(params.commit)"
+
+      url="$(params.url)"
+
+      repository=$(/katanomi/bin/ktn-task git parse --part=repository "$url")
+
+      if [[ "$repository" == "" ]] ; then
+        echo "==> ❌ can not find repository from url: $url"
+        exit 1;
+      fi
+
+      revision=$(cat /tmp/revision)
+
+      if [[ "$revision" == "" ]] ; then
+        revision=$(/katanomi/bin/ktn-task git parse --part=revision "$url")
+      fi
+
+      final_revision="$(params.commit)"
+      if [[ "$final_revision" == "" ]] ; then
+        final_revision="$(cat /tmp/revision)"
+      fi
+
+      if [[ "$revision" == "" ]] ; then
+        echo "==> ❌ can not find revision from any of these params: url, commit, revision"
+        echo "==> ❌ please check your params"
+        echo "==> ❌ url: $url"
+        echo "==> ❌ commit: $(params.commit)"
+        echo "==> ❌ revision: $(cat /tmp/revision)"
+        exit 1;
+      fi
+
+      CHECKOUT_DIR="$(workspaces.source.path)"
+      if [ -n "$(params.checkout-path)" ]; then
+          CHECKOUT_DIR="$(params.checkout-path)"
+      fi
+
+      cleandir() {
+        # Delete any existing contents of the repo directory if it exists.
+        #
+        # We don't just "rm -rf ${CHECKOUT_DIR}" because ${CHECKOUT_DIR} might be "/"
+        # or the root of a mounted volume.
+        if [ -d "${CHECKOUT_DIR}" ] ; then
+          # Delete non-hidden files and directories
+          rm -rf "${CHECKOUT_DIR:?}"/*
+          # Delete files and directories starting with . but excluding ..
+          rm -rf "${CHECKOUT_DIR}"/.[!.]*
+          # Delete files and directories starting with .. plus any other character
+          rm -rf "${CHECKOUT_DIR}"/..?*
+        fi
+      }
+
+      # set ssl_verify default to true
+      ssl_verify=true
+      # init git config and credentials
+      if [ -f /katanomi/bin/ktn-task ]; then
+        host=`echo "$url" | sed -E -e 's|^[^/]*//([^/]*@)?||' -e 's|/.*$||'`
+        # in order to support $url values format below, we should remove substring starts with @:
+        # https://github.com/katanomi/core@master
+        # https://github.com/katanomi/core@refs/heads/master
+        path=`echo "$url" | sed -E -e 's|^[^/]*//([^/]*@)?||' -e 's|@.*$||' -e 's|\.git$||' -e "s|^$host/||"`
+        ret=0
+        /katanomi/bin/ktn-task copy git --server=${host} --scope-prefix=${path} --dir ~/ 2>/dev/null || ret=$?
+        if [ ${ret} -ne 0 ]; then
+          # skip, maybe this is public repo, no need to init git config and credentials
+          echo "==> ❌ init git config and credentials failed, only supports cloning public repositories! host $host, path $path, exit $ret."
+        else
+          echo "==> 📢 init git config and credentials, host $host, path $path"
+        fi
+        # add safe directory avoid `detected dubious ownership in repository at`
+        git config --global --add safe.directory ${CHECKOUT_DIR} || true
+
+        # get and set git ssl verify config if it is false
+        ssl_verify_config=$(/katanomi/bin/ktn-task get gitClone.sslVerify --server=${host} --settings-type=git --source=annotations)
+        if [[ "$ssl_verify_config" == "false" ]] ; then
+          echo "==> 📢 set sslVerify to false"
+          ssl_verify=false
+        fi
+      fi
+
+      $(params.pre-script)
+
+      max_retries=3
+      retry_interval=5
+
+      git_init() {
+        # Prevent error when retry.
+        # Do not need block here when failed to cleandir.
+        # For example, when deleting files we have no permission but generated by the system.
+        cleandir || true
+
+        /ko-app/git-init \
+          -url "$repository" \
+          -revision "$final_revision" \
+          -refspec "$(params.refspec)" \
+          -path "$CHECKOUT_DIR" \
+          -sslVerify="$ssl_verify" \
+          -submodules="true" \
+          -depth "$(params.depth)" 2>&1
+      }
+
+      set +e
+      for i in $(seq 1 $max_retries); do
+        output=$(git_init)
+        if [ $? -eq 0 ]; then
+        echo "$output"
+          break
+        elif echo "$output" | grep -q "Could not resolve host"; then
+          echo "$output"
+          echo "git-init failed with error: Could not resolve host, retry again($i/$max_retries)"
+          if [ $i -lt $max_retries ]; then
+            echo "Retrying after $retry_interval seconds..."
+            sleep $retry_interval
+          else
+            echo "Reached max retries, exiting."
+            exit 1
+          fi
+        else
+          echo "git-init failed with exit code $?"
+        echo "$output"
+        exit 1
+        fi
+      done
+      set -e
+
+      cd "$CHECKOUT_DIR"
+      RESULT_SHA="$(git rev-parse HEAD)"
+      EXIT_CODE="$?"
+      if [ "$EXIT_CODE" != 0 ] ; then
+        exit $EXIT_CODE
+      fi
+
+      echo "==> ✅ clone completed and current commit is $RESULT_SHA"
+
+      # check if the revision is a valid branch, if so, checkout the branch
+      if git ls-remote --heads origin "$revision" | grep -q "refs/heads/${revision#refs/heads/}"; then
+        git fetch origin "$revision"
+        git checkout ${revision#refs/heads/} --
+      fi
+
+      ret=0
+      /katanomi/bin/ktn-task git generate --verbose --exclude-mutation=true --url="$repository" --revision="$revision" 1>/tmp/git-generate.log 2>&1 || ret=$?
+      if [ ${ret} -ne 0 ]; then
+        echo "==> ❌ git generate failed with exit code $ret"
+        cat /tmp/git-generate.log
+      else
+        echo "==> ✅ git generate completed"
+      fi
+
+      # ensure we don't add a trailing newline to the result
+      echo -n "$RESULT_SHA" > $(results.commit-id.path)
+      echo -n "${RESULT_SHA:0:8}" >  $(results.commit-short-id.path)
+      echo -n "$repository" > $(results.url.path)
+      echo -n "$revision" > $(results.revision.path)
+  workspaces:
+  - description: The git repo will be cloned onto the volume backing this workspace
+    name: source
