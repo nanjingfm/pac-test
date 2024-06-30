@@ -5,7 +5,7 @@ metadata:
   name: pac-test
   annotations:
     pipelinesascode.tekton.dev/on-cel-expression: |-
-      target_branch == "main" && && "docs/***".pathChanged()
+      target_branch == "main" && "docs/***".pathChanged()
     pipelinesascode.tekton.dev/task: "[tasks/echo.yaml]"
     pipelinesascode.tekton.dev/max-keep-runs: "5"
 spec:
