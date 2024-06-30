@@ -30,3 +30,12 @@ spec:
         params:
           - name: message
             value: $(params.repo_url) - $(params.revision)
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 50Mi
