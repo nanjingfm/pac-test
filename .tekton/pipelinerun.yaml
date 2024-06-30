@@ -39,3 +39,6 @@ spec:
           resources:
             requests:
               storage: 50Mi
+    - name: basic-auth
+      secret:
+        secretName: "{{ git_auth_secret }}"
