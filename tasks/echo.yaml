@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: echo
+spec:
+  params:
+    - description: the message to echo
+      name: message
+      type: string
+  steps:
+    - name: say
+      image: docker-mirrors.alauda.cn/library/busybox:1.36
+      resources:
+        limits:
+          cpu: 50m
+          memory: 50Mi
+        requests:
+          cpu: 50m
+          memory: 50Mi
+      script: |
+        echo "$(params.message)"
