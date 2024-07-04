@@ -2,7 +2,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: pac-test
+  name: trivy
   annotations:
     pipelinesascode.tekton.dev/on-comment: "^/test-all"
     pipelinesascode.tekton.dev/on-cel-expression: |-
@@ -31,6 +31,7 @@ spec:
                 cat <<EOF
                   {{ repo_url }}
                   {{ body }}
+                  {{ files }}
                 EOF
   workspaces:
     - name: source
