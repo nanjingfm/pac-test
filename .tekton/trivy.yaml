@@ -1,0 +1,50 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: trivy
+  annotations:
+    pipelinesascode.tekton.dev/on-comment: "^/test-all"
+    pipelinesascode.tekton.dev/on-cel-expression: |-
+      target_branch == "main" && "docs/***".pathChanged()
+    pipelinesascode.tekton.dev/task: "[tasks/echo.yaml]"
+    pipelinesascode.tekton.dev/max-keep-runs: "10"
+spec:
+  pipelineSpec:
+    workspaces:
+      - name: source
+      - name: basic-auth
+    tasks:
+      - name: echo
+        taskSpec:
+          steps:
+            - name: say
+              image: docker-mirrors.alauda.cn/library/busybox:1.36
+              resources:
+                limits:
+                  cpu: 50m
+                  memory: 50Mi
+                requests:
+                  cpu: 50m
+                  memory: 50Mi
+              script: |
+                cat <<EOF
+                  {{ repo_url }}
+                  {{ body }}
+                  {{ pac }}
+                  {{ headers }}
+                  {{ files }}
+                  {{ files.all }}
+                EOF
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 50Mi
+    - name: basic-auth
+      secret:
+        secretName: "{{ git_auth_secret }}"
