@@ -31,6 +31,8 @@ spec:
                 cat <<EOF
                   {{ repo_url }}
                   {{ body }}
+                  {{ pac }}
+                  {{ headers }}
                   {{ files }}
                 EOF
   workspaces:

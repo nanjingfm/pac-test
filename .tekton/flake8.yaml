@@ -2,7 +2,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: pac-test-2
+  name: flake8
   annotations:
     pipelinesascode.tekton.dev/on-comment: "^/test-all"
     pipelinesascode.tekton.dev/on-cel-expression: |-
