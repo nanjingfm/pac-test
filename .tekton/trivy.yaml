@@ -29,6 +29,7 @@ spec:
                   memory: 50Mi
               script: |
                 cat <<EOF
+                  {{ trigger_comment }}
                   {{ repo_url }}
                   {{ body }}
                   {{ pac }}
