@@ -10,27 +10,32 @@ metadata:
     pipelinesascode.tekton.dev/task: "[tasks/echo.yaml]"
     pipelinesascode.tekton.dev/max-keep-runs: "10"
 spec:
-  params:
-    # The variable with brackets are special to Pipelines as Code
-    # They will automatically be expanded with the events from Github.
-    - name: repo_url
-      value: "{{ repo_url }}"
-    - name: revision
-      value: "{{ revision }}"
   pipelineSpec:
-    params:
-      - name: repo_url
-      - name: revision
     workspaces:
       - name: source
       - name: basic-auth
     tasks:
       - name: echo
-        taskRef:
-          name: echo
-        params:
-          - name: message
-            value: $(params.repo_url) - $(params.revision)
+        taskSpec:
+          params:
+            - description: the message to echo
+              name: message
+              type: string
+          steps:
+            - name: say
+              image: docker-mirrors.alauda.cn/library/busybox:1.36
+              resources:
+                limits:
+                  cpu: 50m
+                  memory: 50Mi
+                requests:
+                  cpu: 50m
+                  memory: 50Mi
+              script: |
+                cat <<EOF
+                  {{ repo_url }}
+                  {{ body }}
+                EOF
   workspaces:
     - name: source
       volumeClaimTemplate:
