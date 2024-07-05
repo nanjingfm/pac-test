@@ -16,6 +16,7 @@ spec:
   params:
     - name: message
       value: |
+        Hello World!!
         {{ trigger_comment }}
         {{ repo_url }}
         {{ body }}
