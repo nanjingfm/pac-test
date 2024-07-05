@@ -4,7 +4,7 @@ kind: PipelineRun
 metadata:
   name: flake8
   annotations:
-    pipelinesascode.tekton.dev/on-comment: "^\/test-multi.*\ flake8.*"
+    pipelinesascode.tekton.dev/on-comment: "^/test-multi.*\ flake8.*"
     pipelinesascode.tekton.dev/on-cel-expression: |-
       target_branch == "main" && "docs/***".pathChanged()
     pipelinesascode.tekton.dev/task: "[tasks/echo.yaml]"

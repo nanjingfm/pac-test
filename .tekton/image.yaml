@@ -4,7 +4,7 @@ kind: PipelineRun
 metadata:
   name: image
   annotations:
-    pipelinesascode.tekton.dev/on-comment: "^\/test-multi.*\ image.*"
+    pipelinesascode.tekton.dev/on-comment: "^/test-multi.*\ image.*"
     pipelinesascode.tekton.dev/on-cel-expression: |-
       target_branch == "main" && "docs/***".pathChanged()
     pipelinesascode.tekton.dev/task: "[tasks/echo.yaml]"
