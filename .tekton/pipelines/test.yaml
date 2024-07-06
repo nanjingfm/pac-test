@@ -1,0 +1,26 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: test
+spec:
+  params:
+    - name: message
+      default: ""
+  tasks:
+    - name: echo
+      taskSpec:
+        steps:
+          - name: say
+            image: docker-mirrors.alauda.cn/library/busybox:1.36
+            resources:
+              limits:
+                cpu: 50m
+                memory: 50Mi
+              requests:
+                cpu: 50m
+                memory: 50Mi
+            script: |
+              echo "1111 {{ trigger_comment }}"
+              cat <<EOF
+                $(params.message)
+              EOF
