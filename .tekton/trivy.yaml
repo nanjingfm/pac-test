@@ -33,7 +33,7 @@ spec:
                   memory: 50Mi
               script: |
                 revision="refs/heads/{{source_branch}}"
-                if [ "{{pull_request_number}}" neq "" ]; then
+                if [ -n "{{pull_request_number}}" ]; then
                   revision="refs/pull/{{pull_request_number}}/head"
                 fi
                 echo ${revision}
