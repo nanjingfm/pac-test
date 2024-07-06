@@ -10,32 +10,56 @@ metadata:
     pipelinesascode.tekton.dev/pipeline: "[.tekton/pipelines/test.yaml]"
     pipelinesascode.tekton.dev/max-keep-runs: "10"
 spec:
-  pipelineRef:
-    name: test
-  params:
-    - name: message
-      value: |
-        ==== builtin variables ====
-        event_type: {{event_type}}
-        git_auth_secret: {{git_auth_secret}}
-        headers: {{headers}}
-        pull_request_number: {{pull_request_number}}
-        repo_name: {{repo_name}}
-        repo_owner: {{repo_owner}}
-        repo_url: {{repo_url}}
-        revision: {{revision}}
-        sender: {{sender}}
-        source_branch: {{source_branch}}
-        source_url: {{source_url}}
-        target_branch: {{target_branch}}
-        target_namespace: {{target_namespace}}	
-        trigger_comment: {{trigger_comment}}
-        
-        ==== other variables ====
-        {{ body }}
-        {{ pac }}
-        {{ headers }}
-        {{ files }}
+  pipelineSpec:
+    workspaces:
+      - name: source
+      - name: basic-auth
+    tasks:
+      - name: parseRevision
+        taskSpec:
+          steps:
+            - name: say
+              image: docker-mirrors.alauda.cn/library/busybox:1.36
+              resources:
+                limits:
+                  cpu: 50m
+                  memory: 50Mi
+                requests:
+                  cpu: 50m
+                  memory: 50Mi
+              script: |
+                revision="refs/heads/{{source_branch}}"
+                if [ "{{pull_request_number}}" neq "" ]; then
+                  revision="refs/pull/{{pull_request_number}}/head"
+                fi
+                echo ${revision}
+      - name: print
+        pipelineRef:
+          name: test
+        params:
+          - name: message
+            value: |
+              ==== builtin variables ====
+              event_type: {{event_type}}
+              git_auth_secret: {{git_auth_secret}}
+              headers: {{headers}}
+              pull_request_number: {{pull_request_number}}
+              repo_name: {{repo_name}}
+              repo_owner: {{repo_owner}}
+              repo_url: {{repo_url}}
+              revision: {{revision}}
+              sender: {{sender}}
+              source_branch: {{source_branch}}
+              source_url: {{source_url}}
+              target_branch: {{target_branch}}
+              target_namespace: {{target_namespace}}	
+              trigger_comment: {{trigger_comment}}
+              
+              ==== other variables ====
+              {{ body }}
+              {{ pac }}
+              {{ headers }}
+              {{ files }}
   workspaces:
     - name: source
       volumeClaimTemplate:
