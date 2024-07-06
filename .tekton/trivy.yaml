@@ -7,14 +7,20 @@ metadata:
     pipelinesascode.tekton.dev/on-cel-expression: |-
       event == "pull_request" || event == "push"
     pipelinesascode.tekton.dev/task: "[.tekton/tasks/echo.yaml]"
-    pipelinesascode.tekton.dev/pipeline: "[.tekton/pipelines/test.yaml,.tekton/pipelines/test2.yaml]"
+    pipelinesascode.tekton.dev/pipeline: "[.tekton/pipelines/test.yaml]"
     pipelinesascode.tekton.dev/max-keep-runs: "10"
 spec:
-  pipelineRef:
-    name: test2
-  params:
-    - name: message
-      value: "aaa"
+  pipelineSpec:
+    tasks:
+      - name: security-scans
+        params:
+          - name: message
+            value: |
+              ==== builtin variables ====
+              event_type: {{event_type}}
+              git_auth_secret: {{git_auth_secret}}
+        pipelineRef:
+          name: test
   workspaces:
     - name: source
       volumeClaimTemplate:
