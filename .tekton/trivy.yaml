@@ -10,43 +10,12 @@ metadata:
     pipelinesascode.tekton.dev/pipeline: "[.tekton/pipelines/test.yaml]"
     pipelinesascode.tekton.dev/max-keep-runs: "10"
 spec:
-  pipelineSpec:
-    workspaces:
-      - name: source
-      - name: basic-auth
-    tasks:
-      - name: parse-revision
-        taskSpec:
-          results:
-            - description: revision computed based on the event content
-              name: computedRevision
-              type: string
-          steps:
-            - name: say
-              image: docker-mirrors.alauda.cn/library/busybox:1.36
-              resources:
-                limits:
-                  cpu: 50m
-                  memory: 50Mi
-                requests:
-                  cpu: 50m
-                  memory: 50Mi
-              script: |
-                revision="refs/heads/{{source_branch}}"
-                if [ "{{event_type}}" = "pull_request" ]; then
-                  revision="refs/pull/{{pull_request_number}}/head"
-                fi
-                echo ${revision}
-                echo -n ${revision} > $(results.computedRevision.path)
-      - name: security-scans
-        params:
-          - name: message
-            value: |
-              ==== builtin variables ====
-              event_type: {{event_type}}
-              git_auth_secret: {{git_auth_secret}}
-        pipelineRef:
-          name: test
+  pipelineRef:
+    name: test2
+  params:
+    name: message
+    value: |
+      echo aaaaaaaaaaaa
   workspaces:
     - name: source
       volumeClaimTemplate:

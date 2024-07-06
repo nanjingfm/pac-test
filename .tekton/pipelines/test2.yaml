@@ -1,0 +1,36 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: test2
+spec:
+  params:
+    - name: message
+      default: ""
+  tasks:
+    - name: parse-revision
+      taskSpec:
+        results:
+          - description: revision computed based on the event content
+            name: computedRevision
+            type: string
+        steps:
+          - name: say
+            image: docker-mirrors.alauda.cn/library/busybox:1.36
+            resources:
+              limits:
+                cpu: 50m
+                memory: 50Mi
+              requests:
+                cpu: 50m
+                memory: 50Mi
+            script: |
+              echo 111
+    - name: security-scans
+      params:
+        - name: message
+          value: |
+            ==== builtin variables ====
+            event_type: {{event_type}}
+            git_auth_secret: {{git_auth_secret}}
+      pipelineRef:
+        name: test
