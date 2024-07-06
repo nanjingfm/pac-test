@@ -13,9 +13,8 @@ spec:
   pipelineRef:
     name: test2
   params:
-    name: message
-    value: |
-      echo aaaaaaaaaaaa
+    - name: message
+      value: "aaa"
   workspaces:
     - name: source
       volumeClaimTemplate:
