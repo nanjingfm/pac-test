@@ -38,43 +38,15 @@ spec:
                 fi
                 echo ${revision}
                 echo -n ${revision} > $(results.computedRevision.path)
-      - name: print
-        taskSpec:
-          steps:
-            - name: say
-              image: docker-mirrors.alauda.cn/library/busybox:1.36
-              resources:
-                limits:
-                  cpu: 50m
-                  memory: 50Mi
-                requests:
-                  cpu: 50m
-                  memory: 50Mi
-              script: |
-                echo "1111 {{ trigger_comment }}"
-                cat <<EOF
-                  ==== builtin variables ====
-                  event_type: {{event_type}}
-                  git_auth_secret: {{git_auth_secret}}
-                  headers: {{headers}}
-                  pull_request_number: {{pull_request_number}}
-                  repo_name: {{repo_name}}
-                  repo_owner: {{repo_owner}}
-                  repo_url: {{repo_url}}
-                  revision: {{revision}}
-                  sender: {{sender}}
-                  source_branch: {{source_branch}}
-                  source_url: {{source_url}}
-                  target_branch: {{target_branch}}
-                  target_namespace: {{target_namespace}}
-                  trigger_comment: {{trigger_comment}}
-                  
-                  ==== other variables ====
-                  {{ body }}
-                  {{ pac }}
-                  {{ headers }}
-                  {{ files }}
-                EOF
+      - name: security-scans
+        params:
+          - name: message
+            value: |
+              ==== builtin variables ====
+              event_type: {{event_type}}
+              git_auth_secret: {{git_auth_secret}}
+        pipelineRef:
+          name: test
   workspaces:
     - name: source
       volumeClaimTemplate:
