@@ -28,9 +28,6 @@ spec:
     - name: security-scans
       params:
         - name: message
-          value: |
-            ==== builtin variables ====
-            event_type: {{event_type}}
-            git_auth_secret: {{git_auth_secret}}
+          value: $(params.message)
       pipelineRef:
         name: test
