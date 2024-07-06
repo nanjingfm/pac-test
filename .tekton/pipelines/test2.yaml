@@ -7,20 +7,6 @@ spec:
     - name: message
       default: ""
   tasks:
-    - name: parse-revision
-      taskSpec:
-        steps:
-          - name: say
-            image: docker-mirrors.alauda.cn/library/busybox:1.36
-            resources:
-              limits:
-                cpu: 50m
-                memory: 50Mi
-              requests:
-                cpu: 50m
-                memory: 50Mi
-            script: |
-              echo 111
     - name: security-scans
       params:
         - name: message
