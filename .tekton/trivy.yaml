@@ -33,7 +33,7 @@ spec:
                   memory: 50Mi
               script: |
                 revision="refs/heads/{{source_branch}}"
-                if [ -n "{{pull_request_number}}" ]; then
+                if [ "{{event_type}}" = "pull_request" ]; then
                   revision="refs/pull/{{pull_request_number}}/head"
                 fi
                 echo ${revision}
