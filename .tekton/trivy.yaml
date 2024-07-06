@@ -4,10 +4,9 @@ kind: PipelineRun
 metadata:
   name: trivy
   annotations:
-    pipelinesascode.tekton.dev/on-comment: "^/test-multi.*\ trivy.*"
     pipelinesascode.tekton.dev/on-cel-expression: |-
-      target_branch == "main" && "docs/***".pathChanged()
-    pipelinesascode.tekton.dev/task: "[tasks/echo.yaml]"
+      event == "pull_request" || event == "push"
+    pipelinesascode.tekton.dev/task: "[.tekton/tasks/echo.yaml]"
     pipelinesascode.tekton.dev/pipeline: "[.tekton/pipelines/test.yaml]"
     pipelinesascode.tekton.dev/max-keep-runs: "10"
 spec:
@@ -16,14 +15,27 @@ spec:
   params:
     - name: message
       value: |
-        Hello World!!
-        {{ trigger_comment }}
-        {{ repo_url }}
+        ==== builtin variables ====
+        event_type: {{event_type}}
+        git_auth_secret: {{git_auth_secret}}
+        headers: {{headers}}
+        pull_request_number: {{pull_request_number}}
+        repo_name: {{repo_name}}
+        repo_owner: {{repo_owner}}
+        repo_url: {{repo_url}}
+        revision: {{revision}}
+        sender: {{sender}}
+        source_branch: {{source_branch}}
+        source_url: {{source_url}}
+        target_branch: {{target_branch}}
+        target_namespace: {{target_namespace}}	
+        trigger_comment: {{trigger_comment}}
+        
+        ==== other variables ====
         {{ body }}
         {{ pac }}
         {{ headers }}
         {{ files }}
-        {{ files.all }}
   workspaces:
     - name: source
       volumeClaimTemplate:
