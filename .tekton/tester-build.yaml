@@ -1,0 +1,221 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: catalog
+  annotations:
+    # The event we are targeting as seen from the webhook payload
+    # this can be an array too, i.e: [pull_request, push]
+    pipelinesascode.tekton.dev/on-event: "[pull_request, push]"
+
+    # The branch or tag we are targeting (ie: main, refs/tags/*)
+    pipelinesascode.tekton.dev/on-target-branch: "[test]"
+
+    # Fetch the git-clone task from hub, we are able to reference later on it
+    # with taskRef and it will automatically be embedded into our pipeline.
+    pipelinesascode.tekton.dev/task: "[.tekton/tasks/alauda-git-clone.yaml]"
+
+    pipelinesascode.tekton.dev/max-keep-runs: "1"
+spec:
+  params:
+    # The variable with brackets are special to Pipelines as Code
+    # They will automatically be expanded with the events from Github.
+    - name: repo_url
+      value: "{{ repo_url }}"
+    - name: revision
+      value: "{{ revision }}"
+  pipelineSpec:
+    workspaces:
+      - description: |
+          This workspace is shared among all the pipeline tasks to read/write common resources
+        name: source
+      - description: golang cache
+        name: cache
+        optional: true
+    # runTemplate:
+    #   spec:
+    #     taskRunSpecs:
+    #       - pipelineTaskName: build-catalog-tester-pr
+    #         stepOverrides:
+    #           - name: build
+    #             resources:
+    #               requests:
+    #                 cpu: "2"
+    #                 memory: 3Gi
+    #               limits:
+    #                 cpu: "5"
+    #                 memory: 5Gi
+    #           - name: push
+    #             resources:
+    #               requests:
+    #                 cpu: 250m
+    #                 memory: 256Mi
+    #               limits:
+    #                 cpu: "1"
+    #                 memory: 1Gi
+    #       - pipelineTaskName: build-catalog-tester-main
+    #         stepOverrides:
+    #           - name: build
+    #             resources:
+    #               requests:
+    #                 cpu: "2"
+    #                 memory: 3Gi
+    #               limits:
+    #                 cpu: "5"
+    #                 memory: 5Gi
+    #           - name: push
+    #             resources:
+    #               requests:
+    #                 cpu: 500m
+    #                 memory: 512Mi
+    #               limits:
+    #                 cpu: "1"
+    #                 memory: 1Gi
+    tasks:
+      - name: git-clone
+        params:
+          - name: url
+            value: $(params.repo_url)
+          - name: revision
+            value: $(params.revision)
+          - name: depth
+            value: "1"
+          - name: tools-image
+            value: registry.alauda.cn:60080/devops/tektoncd/pipeline/cmd/git-init:v0.56.0-72abf918
+        retries: 3
+        taskRef:
+          name: alauda-git-clone
+        timeout: 10m0s
+        workspaces:
+          - name: source
+            workspace: source
+      # - name: generate-version
+      #   params:
+      #     - name: repo-url
+      #       value: $(params.git-url)
+      #     - name: repo-ref
+      #       value: $(params.git-revision)
+      #   runAfter:
+      #     - git-clone
+      #   taskRef:
+      #     kind: ClusterTask
+      #     name: katanomi-generate-version
+      #   workspaces:
+      #     - name: source
+      #       workspace: source
+      # - name: build-catalog-tester-pr
+      #   timeout: 60m
+      #   retries: 0
+      #   runAfter:
+      #     - generate-version
+      #   taskRef:
+      #     kind: ClusterTask
+      #     name: build-image-buildkit
+      #   when:
+      #     - input: {{event_type}}
+      #       operator: in
+      #       values:
+      #         - "pull_request"
+      #   workspaces:
+      #     - name: source
+      #       workspace: source
+      #   params:
+      #     - name: container-images
+      #       value:
+      #         - build-harbor.alauda.cn/devops/catalog-task-tester:$(tasks.generate-version.results.semver-version)
+      #     - name: dockerfile
+      #       value: test/Dockerfile
+      #     - name: labels
+      #       value:
+      #         - branch=$(tasks.generate-version.results.branch)
+      #         - commit=$(tasks.generate-version.results.commit-id)
+      # - name: build-catalog-tester-main
+      #   timeout: 60m
+      #   retries: 0
+      #   runAfter:
+      #     - generate-version
+      #   taskRef:
+      #     kind: ClusterTask
+      #     name: build-image-buildkit
+      #   #      when:
+      #   #        - cel: "'$(build.git.branch.name)' == 'main'"
+      #   workspaces:
+      #     - name: source
+      #       workspace: source
+      #   params:
+      #     - name: container-images
+      #       value:
+      #         - build-harbor.alauda.cn/devops/catalog-task-tester:latest
+      #     - name: dockerfile
+      #       value: test/Dockerfile
+      #     - name: labels
+      #       value:
+      #         - branch=$(tasks.generate-version.results.branch)
+      #         - commit=$(tasks.generate-version.results.commit-id)
+      # - name: build-catalog-tester-pr-scan
+      #   timeout: 60m
+      #   retries: 0
+      #   runAfter:
+      #     - build-catalog-tester-pr
+      #   taskRef:
+      #     resolver: katanomi.hub
+      #     params:
+      #       - name: kind
+      #         value: task
+      #       - name: name
+      #         value: trivy-image-scan
+      #   workspaces:
+      #     - name: source
+      #       workspace: source
+      #     - name: cache
+      #       workspace: cache
+      #   params:
+      #     - name: targets
+      #       value:
+      #         - $(tasks.build-catalog-tester-pr.results.ociContainerImageBuild-url)
+      #     - name: quality-gate-rules
+      #       value:
+      #         - severity=Critical
+      #     - name: scan-flags
+      #       value:
+      #         - vulnerability.ignore-unfixed=true
+      #         - db.skip-update=false
+      #         - db.repository=build-harbor.alauda.cn/ops/aquasecurity/trivy-db
+      # - name: build-catalog-tester-main-scan
+      #   timeout: 60m
+      #   retries: 0
+      #   runAfter:
+      #     - build-catalog-tester-main
+      #   taskRef:
+      #     resolver: katanomi.hub
+      #     params:
+      #       - name: kind
+      #         value: task
+      #       - name: name
+      #         value: trivy-image-scan
+      #   workspaces:
+      #     - name: source
+      #       workspace: source
+      #     - name: cache
+      #       workspace: cache
+      #   params:
+      #     - name: targets
+      #       value:
+      #         - $(tasks.build-catalog-tester-main.results.ociContainerImageBuild-url)
+      #     - name: quality-gate-rules
+      #       value:
+      #         - severity=Critical
+      #     - name: scan-flags
+      #       value:
+      #         - vulnerability.ignore-unfixed=true
+      #         - db.skip-update=false
+      #         - db.repository=build-harbor.alauda.cn/ops/aquasecurity/trivy-db
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
