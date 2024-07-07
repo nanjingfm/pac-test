@@ -11,5 +11,7 @@ spec:
       params:
         - name: message
           value: $(params.message)
-      pipelineRef:
+      taskRef:
+        apiVersion: tekton.dev/v1beta1
+        kind: Pipeline
         name: test

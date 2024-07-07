@@ -19,7 +19,9 @@ spec:
               ==== builtin variables ====
               event_type: {{event_type}}
               git_auth_secret: {{git_auth_secret}}
-        pipelineRef:
+        taskRef:
+          apiVersion: tekton.dev/v1beta1
+          kind: Pipeline
           name: test
   workspaces:
     - name: source
