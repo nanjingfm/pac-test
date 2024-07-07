@@ -1,0 +1,17 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: test2
+spec:
+  params:
+    - name: message
+      default: ""
+  tasks:
+    - name: security-scans
+      params:
+        - name: message
+          value: $(params.message)
+      taskRef:
+        apiVersion: tekton.dev/v1beta1
+        kind: Pipeline
+        name: test

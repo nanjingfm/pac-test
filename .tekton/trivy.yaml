@@ -10,32 +10,19 @@ metadata:
     pipelinesascode.tekton.dev/pipeline: "[.tekton/pipelines/test.yaml]"
     pipelinesascode.tekton.dev/max-keep-runs: "10"
 spec:
-  pipelineRef:
-    name: test
-  params:
-    - name: message
-      value: |
-        ==== builtin variables ====
-        event_type: {{event_type}}
-        git_auth_secret: {{git_auth_secret}}
-        headers: {{headers}}
-        pull_request_number: {{pull_request_number}}
-        repo_name: {{repo_name}}
-        repo_owner: {{repo_owner}}
-        repo_url: {{repo_url}}
-        revision: {{revision}}
-        sender: {{sender}}
-        source_branch: {{source_branch}}
-        source_url: {{source_url}}
-        target_branch: {{target_branch}}
-        target_namespace: {{target_namespace}}	
-        trigger_comment: {{trigger_comment}}
-        
-        ==== other variables ====
-        {{ body }}
-        {{ pac }}
-        {{ headers }}
-        {{ files }}
+  pipelineSpec:
+    tasks:
+      - name: security-scans
+        params:
+          - name: message
+            value: |
+              ==== builtin variables ====
+              event_type: {{event_type}}
+              git_auth_secret: {{git_auth_secret}}
+        taskRef:
+          apiVersion: tekton.dev/v1beta1
+          kind: Pipeline
+          name: test
   workspaces:
     - name: source
       volumeClaimTemplate:
